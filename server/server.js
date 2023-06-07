@@ -1,7 +1,7 @@
 const {
   getElapsedTime,
   clearElapsedTime,
-  graphqlSchema
+  graphqlSchema,
 } = require('./schema/schema.js');
 const express = require('express');
 const app = express();
@@ -10,13 +10,13 @@ const bodyparser = require('body-parser');
 const mongoose = require('mongoose');
 const { QuellCache } = require('../quell-server/src/quell.js');
 const env = require('dotenv').config();
-const schema = graphqlSchema
+const schema = graphqlSchema;
 const quellCache = new QuellCache({
   schema: schema,
   cacheExpiration: 3600,
   redisPort: process.env.REDIS_PORT,
   redisHost: process.env.REDIS_HOST,
-  redisPassword: process.env.REDIS_PASSWORD
+  // redisPassword: process.env.REDIS_PASSWORD
 });
 
 app.use(express.json());
@@ -25,10 +25,10 @@ app.use(bodyparser.json());
 app.use(cors());
 
 mongoose
-  .connect(
-    process.env.MONGO_URI,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.log(err));
 
@@ -58,7 +58,7 @@ app.use(
   quellCache.getRedisInfo({
     getStats: true,
     getKeys: true,
-    getValues: true
+    getValues: true,
   }),
   (req, res) => {
     return res.status(200).send(res.locals);
@@ -80,7 +80,7 @@ app.use((err, req, res, next) => {
   const defaultErr = {
     log: 'Express error handler caught unknown middleware error',
     status: 500,
-    message: { err: 'An error occurred' }
+    message: { err: 'An error occurred' },
   };
   const errorObj = Object.assign({}, defaultErr, err);
   console.log(errorObj.log);
